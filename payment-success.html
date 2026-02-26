@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payment Successful</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(-45deg,#00c6ff,#0072ff,#00ff88,#00c6ff);
+background-size:400% 400%;
+animation:bgMove 8s infinite alternate;
+color:white;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
+}
+
+.card{
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(20px);
+padding:40px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 50px rgba(0,0,0,0.5);
+width:400px;
+}
+
+.checkmark{
+width:120px;
+height:120px;
+border-radius:50%;
+border:6px solid #00ffcc;
+margin:auto;
+position:relative;
+}
+
+.checkmark::after{
+content:"";
+position:absolute;
+left:35px;
+top:20px;
+width:30px;
+height:60px;
+border-right:6px solid #00ffcc;
+border-bottom:6px solid #00ffcc;
+transform:rotate(45deg);
+}
+
+.amount{
+font-size:28px;
+color:#00ffcc;
+margin:10px;
+}
+
+.btn{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.invoice{
+background:#ffc107;
+color:black;
+}
+
+.track{
+background:#28a745;
+color:white;
+}
+
+.shop{
+background:#00c6ff;
+color:black;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+<div class="checkmark"></div>
+
+<h1>Payment Successful</h1>
+
+<div class="amount">
+₹<span id="amount"></span>
+</div>
+
+<div>
+Order ID: <span id="orderId"></span>
+</div>
+
+<button class="btn invoice" onclick="downloadInvoice()">
+Download Invoice
+</button>
+
+<button class="btn track" onclick="trackOrder()">
+Track Delivery
+</button>
+
+<button class="btn shop" onclick="goShop()">
+Continue Shopping
+</button>
+
+</div>
+
+<script>
+
+/* Generate Order */
+
+let orderId="ORD"+Math.floor(Math.random()*1000000000);
+
+localStorage.setItem("lastOrderId",orderId);
+
+document.getElementById("orderId").innerHTML=orderId;
+
+/* Load cart backup */
+
+let cart=JSON.parse(localStorage.getItem("cart_backup"))||[];
+
+let total=0;
+
+cart.forEach(item=>{
+total+=item.price*(item.qty||1);
+});
+
+document.getElementById("amount").innerHTML=total;
+
+/* Backup cart */
+
+localStorage.setItem("cart_backup",JSON.stringify(cart));
+
+/* Clear cart */
+
+localStorage.removeItem("cart");
+
+/* Invoice download */
+
+function downloadInvoice(){
+
+let invoice=`
+INVOICE
+
+Order ID: ${orderId}
+
+Items:
+`;
+
+cart.forEach(item=>{
+invoice+=`${item.name} - ₹${item.price} x ${item.qty}\n`;
+});
+
+invoice+=`\nTotal: ₹${total}`;
+
+let blob=new Blob([invoice],{type:"text/plain"});
+
+let link=document.createElement("a");
+
+link.href=URL.createObjectURL(blob);
+
+link.download="invoice_"+orderId+".txt";
+
+link.click();
+
+}
+
+/* Track */
+
+function trackOrder(){
+
+window.location.href="tracking.html";
+
+}
+
+function goShop(){
+
+window.location.href="product.html";
+
+}
+
+</script>
+
+</body>
+</html>
