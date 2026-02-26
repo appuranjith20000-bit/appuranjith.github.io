@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Premium Store</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+background:#eef1f5;
+}
+
+/* HEADER */
+
+.header{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+padding:15px 25px;
+display:flex;
+align-items:center;
+gap:15px;
+box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+
+.logo{
+font-size:26px;
+font-weight:bold;
+color:#00ffd5;
+}
+
+.searchBox{
+flex:1;
+}
+
+.searchBox input{
+width:100%;
+padding:12px;
+border-radius:25px;
+border:none;
+outline:none;
+font-size:15px;
+}
+
+.userArea{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.cartBtn{
+background:#ff3d00;
+color:white;
+padding:8px 15px;
+border-radius:20px;
+font-weight:bold;
+cursor:pointer;
+border:none;
+}
+
+select{
+padding:8px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+}
+
+/* HERO */
+
+.hero{
+background:linear-gradient(135deg,#ff512f,#dd2476);
+color:white;
+padding:50px;
+text-align:center;
+font-size:32px;
+font-weight:bold;
+}
+
+/* FILTER */
+
+.filterBar{
+padding:15px 30px;
+display:flex;
+gap:15px;
+}
+
+/* PRODUCTS */
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:25px;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.badge{
+background:red;
+color:white;
+padding:4px 10px;
+border-radius:10px;
+font-size:12px;
+display:inline-block;
+margin-bottom:5px;
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:contain;
+}
+
+.brand{
+font-size:13px;
+color:#666;
+}
+
+.price{
+color:green;
+font-size:18px;
+font-weight:bold;
+}
+
+.rating{
+color:#ffc107;
+}
+
+.addBtn{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:linear-gradient(135deg,#00c6ff,#0072ff);
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+
+<div class="logo">🛍 PremiumStore</div>
+
+<div class="searchBox">
+<input id="searchInput" type="text" placeholder="Search products...">
+</div>
+
+<div class="userArea">
+
+<button class="cartBtn" onclick="openCart()">
+🛒 Cart (<span id="cartCount">0</span>)
+</button>
+
+</div>
+
+</div>
+
+<div class="hero">
+Premium Shopping Experience
+</div>
+
+<div class="products" id="productList"></div>
+
+<script>
+
+/* PRODUCTS */
+
+let products=[
+
+{name:"iPhone 15",brand:"Apple",price:79999,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/545/545245.png"},
+{name:"Samsung S24",brand:"Samsung",price:69999,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/545/545245.png"},
+{name:"MacBook",brand:"Apple",price:129999,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/1792/1792855.png"},
+{name:"Toy Car",brand:"Hot Wheels",price:499,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/3081/3081559.png"},
+{name:"Men Shoes",brand:"Adidas",price:2999,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/2589/2589874.png"},
+{name:"Women Dress",brand:"Zara",price:1999,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/892/892458.png"},
+{name:"Gaming Controller",brand:"Sony",price:3499,rating:"★★★★★",image:"https://cdn-icons-png.flaticon.com/512/686/686589.png"}
+
+];
+
+/* CART LOAD */
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+/* SHOW PRODUCTS */
+
+function showProducts(){
+
+let html="";
+
+products.forEach((p,index)=>{
+
+html+=`
+<div class="card">
+
+<div class="badge">${p.brand}</div>
+
+<img src="${p.image}">
+
+<h3>${p.name}</h3>
+
+<div class="brand">${p.brand}</div>
+
+<div class="rating">${p.rating}</div>
+
+<div class="price">₹${p.price}</div>
+
+<button class="addBtn" onclick="addToCart(${index})">
+Add to Cart
+</button>
+
+</div>
+`;
+
+});
+
+document.getElementById("productList").innerHTML=html;
+
+}
+
+/* ADD TO CART */
+
+function addToCart(index){
+
+let product = products[index];
+
+let existing = cart.find(item => item.name === product.name);
+
+if(existing){
+
+existing.qty++;
+
+}else{
+
+cart.push({
+name:product.name,
+price:product.price,
+qty:1
+});
+
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+updateCartCount();
+
+}
+
+/* UPDATE CART COUNT */
+
+function updateCartCount(){
+
+let count=0;
+
+cart.forEach(item=>{
+count+=item.qty;
+});
+
+document.getElementById("cartCount").innerText=count;
+
+}
+
+/* OPEN CART */
+
+function openCart(){
+
+window.location.href="cart.html";
+
+}
+
+/* INIT */
+
+showProducts();
+
+updateCartCount();
+
+</script>
+
+</body>
+</html>
