@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Secure Login</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(-45deg,#00c6ff,#0072ff,#43cea2,#185a9d);
+background-size:400% 400%;
+animation:bgMove 12s infinite alternate;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
+}
+
+.container{
+width:340px;
+padding:35px;
+border-radius:20px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(20px);
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
+text-align:center;
+color:white;
+animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:scale(0.8);}
+to{opacity:1; transform:scale(1);}
+}
+
+.logo{
+font-size:26px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.sub{
+font-size:13px;
+opacity:0.8;
+margin-bottom:25px;
+}
+
+.inputBox{
+position:relative;
+margin:18px 0;
+}
+
+.inputBox input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+outline:none;
+background:rgba(255,255,255,0.2);
+color:white;
+font-size:15px;
+}
+
+.inputBox label{
+position:absolute;
+left:12px;
+top:12px;
+font-size:14px;
+color:#ddd;
+pointer-events:none;
+transition:0.3s;
+}
+
+.inputBox input:focus + label,
+.inputBox input:valid + label{
+top:-8px;
+font-size:12px;
+color:#00ffe7;
+}
+
+.toggle{
+position:absolute;
+right:10px;
+top:12px;
+cursor:pointer;
+font-size:12px;
+color:#00ffe7;
+}
+
+.message{
+font-size:13px;
+margin-top:5px;
+}
+
+.success{
+color:#00ffcc;
+}
+
+.error{
+color:#ff4d4d;
+}
+
+/* Shake animation */
+
+.shake{
+animation:shake 0.3s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+75%{transform:translateX(-5px);}
+100%{transform:translateX(0);}
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:20px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+background:linear-gradient(135deg,#00ffe7,#00c6ff);
+color:black;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px rgba(0,255,231,0.6);
+}
+
+.footer{
+margin-top:15px;
+font-size:13px;
+}
+
+a{
+color:#00ffe7;
+text-decoration:none;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container" id="loginBox">
+
+<div class="logo">Welcome Back</div>
+
+<div class="sub">Secure login to your account</div>
+
+<div class="inputBox">
+<input type="text" id="username" required onkeyup="checkUser()">
+<label>Username</label>
+<div class="message" id="userMsg"></div>
+</div>
+
+<div class="inputBox">
+
+<input type="password" id="password" required>
+
+<label>Password</label>
+
+<span class="toggle" onclick="togglePassword()">Show</span>
+
+</div>
+
+<button onclick="login()">Login →</button>
+
+<div class="footer">
+New user? <a href="signup.html">Create account</a>
+</div>
+
+<div class="message success" id="successMsg"></div>
+
+<div class="message error" id="errorMsg"></div>
+
+</div>
+
+<script>
+
+let attempts=0;
+
+/* Toggle password */
+
+function togglePassword(){
+
+let pass=document.getElementById("password");
+
+pass.type = pass.type==="password" ? "text" : "password";
+
+}
+
+/* Check user exists */
+
+function checkUser(){
+
+let username=document.getElementById("username").value;
+
+let users=JSON.parse(localStorage.getItem("users"))||[];
+
+let msg=document.getElementById("userMsg");
+
+if(users.find(u=>u.username===username)){
+msg.innerHTML="User found ✓";
+msg.className="message success";
+}else{
+msg.innerHTML="User not registered";
+msg.className="message error";
+}
+
+}
+
+/* Login */
+
+function login(){
+
+let username=document.getElementById("username").value;
+let password=document.getElementById("password").value;
+
+let users=JSON.parse(localStorage.getItem("users"))||[];
+
+let user=users.find(u=>u.username===username);
+
+let error=document.getElementById("errorMsg");
+
+let success=document.getElementById("successMsg");
+
+let box=document.getElementById("loginBox");
+
+if(!user){
+
+error.innerHTML="User not found";
+box.classList.add("shake");
+
+setTimeout(()=>box.classList.remove("shake"),300);
+
+return;
+
+}
+
+if(user.password!==password){
+
+attempts++;
+
+error.innerHTML="Wrong password";
+
+box.classList.add("shake");
+
+setTimeout(()=>box.classList.remove("shake"),300);
+
+if(attempts>=5){
+error.innerHTML="Too many failed attempts. Try later.";
+}
+
+return;
+
+}
+
+/* Correct login */
+
+localStorage.setItem("currentUser",username);
+
+success.innerHTML="Login successful ✓";
+
+setTimeout(()=>{
+window.location.href="product.html";
+},1000);
+
+}
+
+/* Enter key support */
+
+document.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+login();
+}
+
+});
+
+</script>
+
+</body>
+</html>
