@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Track Your Order</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#141e30,#243b55);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+padding:30px;
+border-radius:20px;
+width:450px;
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+}
+
+h2{
+text-align:center;
+margin-bottom:10px;
+}
+
+.orderId{
+text-align:center;
+color:#00ffcc;
+margin-bottom:20px;
+}
+
+/* Progress bar */
+
+.progressContainer{
+width:100%;
+height:10px;
+background:rgba(255,255,255,0.2);
+border-radius:10px;
+overflow:hidden;
+margin-bottom:25px;
+}
+
+.progressBar{
+height:100%;
+width:0%;
+background:#00ffcc;
+transition:1s;
+}
+
+/* Steps */
+
+.step{
+display:flex;
+align-items:center;
+margin:15px 0;
+opacity:0.5;
+}
+
+.step.active{
+opacity:1;
+color:#00ffcc;
+}
+
+.circle{
+width:20px;
+height:20px;
+border-radius:50%;
+background:white;
+margin-right:10px;
+}
+
+.step.active .circle{
+background:#00ffcc;
+}
+
+/* Button */
+
+.btn{
+width:100%;
+padding:12px;
+margin-top:20px;
+border:none;
+border-radius:10px;
+background:#00c6ff;
+color:black;
+font-size:16px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+<h2>Track Delivery</h2>
+
+<div class="orderId">
+Order ID: <span id="orderId"></span>
+</div>
+
+<div class="progressContainer">
+<div class="progressBar" id="progressBar"></div>
+</div>
+
+<div class="step" id="step1">
+<div class="circle"></div>
+Order Confirmed
+</div>
+
+<div class="step" id="step2">
+<div class="circle"></div>
+Packed
+</div>
+
+<div class="step" id="step3">
+<div class="circle"></div>
+Out for Delivery
+</div>
+
+<div class="step" id="step4">
+<div class="circle"></div>
+Delivered
+</div>
+
+<div style="margin-top:15px;text-align:center;">
+Estimated Delivery: <span id="date"></span>
+</div>
+
+<button class="btn" onclick="goShop()">
+Continue Shopping
+</button>
+
+</div>
+
+<script>
+
+/* Load Order ID */
+
+let orderId = localStorage.getItem("lastOrderId") || "N/A";
+
+document.getElementById("orderId").innerHTML = orderId;
+
+/* Delivery progress simulation */
+
+let progress = localStorage.getItem("deliveryProgress");
+
+if(progress == null){
+
+progress = 1;
+localStorage.setItem("deliveryProgress", progress);
+
+}else{
+
+progress = parseInt(progress);
+
+}
+
+/* Activate steps */
+
+for(let i=1;i<=progress;i++){
+
+document.getElementById("step"+i).classList.add("active");
+
+}
+
+/* Progress bar width */
+
+document.getElementById("progressBar").style.width =
+(progress-1)*33 + "%";
+
+/* Increase progress automatically */
+
+setTimeout(()=>{
+
+if(progress < 4){
+
+progress++;
+
+localStorage.setItem("deliveryProgress", progress);
+
+location.reload();
+
+}
+
+},3000);
+
+/* Estimated date */
+
+let d = new Date();
+
+d.setDate(d.getDate()+3);
+
+document.getElementById("date").innerHTML =
+d.toDateString();
+
+/* Continue shopping */
+
+function goShop(){
+
+window.location.href="product.html";
+
+}
+
+</script>
+
+</body>
+</html>
