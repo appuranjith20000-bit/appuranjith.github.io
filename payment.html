@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Secure Payment Gateway</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* CONTAINER */
+
+.container{
+width:450px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+padding:25px;
+border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+}
+
+/* TITLE */
+
+h2{
+text-align:center;
+margin-bottom:5px;
+}
+
+.amount{
+text-align:center;
+font-size:28px;
+color:#00ffcc;
+margin-bottom:15px;
+}
+
+/* METHOD */
+
+.methodTitle{
+margin-top:15px;
+font-weight:bold;
+color:#00ffcc;
+}
+
+/* OPTION */
+
+.option{
+background:rgba(255,255,255,0.1);
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.option:hover{
+background:rgba(0,255,204,0.2);
+transform:scale(1.02);
+}
+
+.selected{
+border:2px solid #00ffcc;
+background:rgba(0,255,204,0.2);
+}
+
+/* PAY BUTTON */
+
+.payBtn{
+width:100%;
+padding:15px;
+margin-top:20px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#00ffcc,#00c6ff);
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+color:black;
+}
+
+.payBtn:hover{
+transform:scale(1.05);
+}
+
+/* SECURE */
+
+.secure{
+text-align:center;
+margin-top:10px;
+opacity:0.8;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Secure Payment</h2>
+
+<div class="amount">
+₹<span id="amount"></span>
+</div>
+
+<!-- UPI -->
+
+<div class="methodTitle">UPI Payment</div>
+
+<div class="option" onclick="select(this,'PhonePe')">📱 PhonePe</div>
+<div class="option" onclick="select(this,'Google Pay')">📱 Google Pay (GPay)</div>
+<div class="option" onclick="select(this,'Paytm')">📱 Paytm</div>
+<div class="option" onclick="select(this,'BHIM UPI')">📱 BHIM UPI</div>
+<div class="option" onclick="select(this,'Amazon Pay UPI')">📱 Amazon Pay UPI</div>
+
+<!-- CARD -->
+
+<div class="methodTitle">Credit / Debit Cards</div>
+
+<div class="option" onclick="select(this,'Visa')">💳 Visa Card</div>
+<div class="option" onclick="select(this,'Mastercard')">💳 Mastercard</div>
+<div class="option" onclick="select(this,'American Express')">💳 American Express</div>
+<div class="option" onclick="select(this,'HDFC Card')">💳 HDFC Bank Card</div>
+<div class="option" onclick="select(this,'Axis Cashback Card')">💳 Axis Cashback Card</div>
+
+<!-- NET BANKING -->
+
+<div class="methodTitle">Net Banking</div>
+
+<div class="option" onclick="select(this,'SBI')">🏦 State Bank of India</div>
+<div class="option" onclick="select(this,'ICICI')">🏦 ICICI Bank</div>
+<div class="option" onclick="select(this,'Bank of Baroda')">🏦 Bank of Baroda</div>
+<div class="option" onclick="select(this,'Central Bank')">🏦 Central Bank of India</div>
+<div class="option" onclick="select(this,'HDFC Bank')">🏦 HDFC Bank</div>
+
+<!-- EMI -->
+
+<div class="methodTitle">EMI Options</div>
+
+<div class="option" onclick="select(this,'No Cost EMI')">📅 No Cost EMI</div>
+<div class="option" onclick="select(this,'Low Cost EMI')">📅 Low Cost EMI</div>
+<div class="option" onclick="select(this,'Standard EMI')">📅 Standard EMI</div>
+<div class="option" onclick="select(this,'Bajaj Finserv EMI')">📅 Bajaj Finserv EMI</div>
+
+<button class="payBtn" onclick="payNow()">
+Pay Securely →
+</button>
+
+<div class="secure">
+🔒 SSL Secured | 100% Safe Payment
+</div>
+
+</div>
+
+<script>
+
+/* TOTAL */
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let total = 0;
+
+cart.forEach(item=>{
+total += item.price * (item.qty || 1);
+});
+
+document.getElementById("amount").innerHTML = total;
+
+/* SELECT */
+
+let selectedMethod="";
+
+function select(element,method){
+
+document.querySelectorAll(".option")
+.forEach(opt=>opt.classList.remove("selected"));
+
+element.classList.add("selected");
+
+selectedMethod=method;
+
+}
+
+/* PAY */
+
+function payNow(){
+
+if(selectedMethod==""){
+alert("Please select payment method");
+return;
+}
+
+alert("Processing payment via "+selectedMethod);
+
+setTimeout(()=>{
+
+localStorage.removeItem("cart");
+
+window.location.href="payment-success.html";
+
+},1500);
+
+}
+
+</script>
+
+</body>
+</html>
