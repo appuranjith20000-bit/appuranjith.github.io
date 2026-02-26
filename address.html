@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Select Address</title>
+
+<style>
+
+body{
+font-family:Segoe UI;
+background:#141e30;
+color:white;
+padding:20px;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:6px 0;
+border-radius:8px;
+border:none;
+outline:none;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#00ffcc;
+cursor:pointer;
+font-size:16px;
+}
+
+.addressCard{
+padding:12px;
+margin:10px 0;
+background:#243b55;
+border-radius:8px;
+border:2px solid transparent;
+}
+
+.addressCard.selected{
+border:2px solid #00ffcc;
+background:#1b2f45;
+}
+
+.deleteBtn{
+background:red;
+margin-top:8px;
+padding:6px;
+border-radius:6px;
+color:white;
+cursor:pointer;
+border:none;
+}
+
+.selectArea{
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<h2>Select Address</h2>
+
+<div id="addressList"></div>
+
+<h3>Add New Address</h3>
+
+<input id="name" placeholder="Full Name">
+<input id="phone" placeholder="Phone Number">
+<textarea id="address" placeholder="Full Address"></textarea>
+
+<button onclick="saveAddress()">Save Address</button>
+
+<button onclick="continuePayment()">Continue to Payment →</button>
+
+<script>
+
+let addresses = JSON.parse(localStorage.getItem("addresses")) || [];
+let selectedIndex = localStorage.getItem("selectedAddressIndex");
+
+function display(){
+
+let list = document.getElementById("addressList");
+list.innerHTML="";
+
+addresses.forEach((a,i)=>{
+
+let card = document.createElement("div");
+
+card.className="addressCard";
+
+if(i == selectedIndex){
+card.classList.add("selected");
+}
+
+card.innerHTML=`
+
+<div class="selectArea" onclick="selectAddress(${i})">
+
+<b>${a.name}</b><br>
+${a.phone}<br>
+${a.address}
+
+</div>
+
+<button class="deleteBtn" onclick="deleteAddress(${i})">
+Delete Address
+</button>
+
+`;
+
+list.appendChild(card);
+
+});
+
+}
+
+function selectAddress(i){
+
+selectedIndex = i;
+
+localStorage.setItem("selectedAddressIndex", i);
+
+display();
+
+}
+
+function saveAddress(){
+
+let nameValue = document.getElementById("name").value.trim();
+let phoneValue = document.getElementById("phone").value.trim();
+let addressValue = document.getElementById("address").value.trim();
+
+if(nameValue=="" || phoneValue=="" || addressValue==""){
+return;
+}
+
+let newAddress = {
+name: nameValue,
+phone: phoneValue,
+address: addressValue
+};
+
+addresses.push(newAddress);
+
+localStorage.setItem("addresses", JSON.stringify(addresses));
+
+document.getElementById("name").value="";
+document.getElementById("phone").value="";
+document.getElementById("address").value="";
+
+display();
+
+}
+
+function deleteAddress(index){
+
+addresses.splice(index,1);
+
+localStorage.setItem("addresses", JSON.stringify(addresses));
+
+if(selectedIndex == index){
+localStorage.removeItem("selectedAddressIndex");
+selectedIndex = null;
+}
+
+display();
+
+}
+
+function continuePayment(){
+
+if(selectedIndex == null){
+return;
+}
+
+window.location.href="payment.html";
+
+}
+
+display();
+
+</script>
+
+</body>
+</html>
